@@ -1,0 +1,28 @@
+project:
+  type: book
+
+book: 
+  title: "How to approach the definition of WUI in northern Europe"
+  author: "Javier Elio, Elsa Pastor, Nieves Fernandez-Anez, Frida Vermina Plathner"
+  date: today
+  chapters:
+    - raster.qmd
+
+bibliography: references.bib
+link-citations: true
+
+format:
+  html:
+    embed-resources: true
+    theme: cosmo
+    code-fold: true
+    code-summary: "Show the code"
+    code-tools: true
+    fig-align: center
+
+editor: visual
+
+execute:
+  warning: false
+  message: false
+
