@@ -1,0 +1,12 @@
+# Preface
+
+Data have been analysed with **R** (version `r paste(R.Version()$major, R.Version()$minor, sep = ".")`) and **Rstudio**, and the book has been created with **Quarto**. 
+
+R session {.unnumbered}
+
+```{r R-session, echo = FALSE}
+
+sessionInfo()
+
+```
+

@@ -1,0 +1,12 @@
+# Aricle
+
+How to approach the definition of WUI in northern Europe (doi: ) 
+
+## Abstract {.unnumbered}
+
+This paper aims to delineate the wildland-urban interface in the sparsely populated, limited resourced Atlantic-Boreal Europe. Due to its demographic and biophysical differences to southern Europe, as well as to other fire-prone regions, current WUI definitions to suit the needs of southern countries are not viable. Therefore, common WUI mapping assumptions, and how well the resulting WUI maps (thresholds) capture the reality of wildfire in northern Europe, are scoped.
+
+
+## Acknowledgements {.unnumbered}
+
+This work has been financed by XXX

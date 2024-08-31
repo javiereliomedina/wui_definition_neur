@@ -6,7 +6,9 @@ book:
   author: "Javier Elio, Elsa Pastor, Nieves Fernandez-Anez, Frida Vermina Plathner"
   date: today
   chapters:
-    - raster.qmd
+    - index.qmd
+    - article.qmd
+    - article_codes.qmd
 
 bibliography: references.bib
 link-citations: true
