@@ -3,5 +3,8 @@
 .RData
 .Ruserdata
 data/big_data
+data/processed_data
+article_codes_cache
+article_codes_files
 
 /.quarto/
