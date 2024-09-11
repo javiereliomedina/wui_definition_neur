@@ -32,7 +32,7 @@ In addition to the packages, we define our own functions for the analysis:
 #| label: aux-functions
 
 
-# Function: get_perc_veg_buffer ----
+#' Function: get_perc_veg_buffer ----
 #' Function for calculating if the percentage of vegetation within a buffer area is higher than a threshold 
 #' @description It returns a raster indicating if the percentage of flammable vegetation within a circumference, from the centre of the grid (buffer), higher than a threshold (YES = 1, NO = 0)
 #' @param .veg raster layer indicating if the vegetation is considered as fuel or not (YES = 1, NO = 0). 
@@ -55,7 +55,7 @@ get_perc_veg_buffer <- function(.veg,
   
 } 
 
-# Function: get_large_polygons ----
+#' Function: get_large_polygons ----
 #' Function for removing small areas from a raster file. Used for calculating large forest areas (e.g., > 5 km2).  
 #' @description It returns a raster with all the polygons larger than a minimal area (YES = 1, NO = 0)
 #' @param .x starts object (i.e., 1 - fuel vegetation, 0 - no fuel vegetation). 
@@ -90,7 +90,7 @@ get_large_polygons <- function(.x,
   
 }
 
-# get_dist_max ----
+#' get_dist_max ----
 #' Get cells within a distance to vegetated area (YES --> 1; NO --> 0)  
 #' @description It returns a raster with indicating the cells that are within the distance to the vegetated areas (YES = 1, NO = 0)
 #' @param .x Raster with distances (from `terra::distance`) 
@@ -105,7 +105,7 @@ get_dist_max <- function(.x, .max_dist) {
   
 }
 
-# Function: get_wui_raster ----
+#' Function: get_wui_raster ----
 #' Function for WUI classification
 #' @description it returns a raster with WUI areas (Interface or Intermix)
 #' @param .veg_perc raster layer indicating if the percentage of vegetation in
@@ -160,7 +160,7 @@ get_wui_raster <- function(.veg_perc,
   
 }
 
-# add_colours_wui 
+#' add_colours_wui 
 #' Function for adding WUI colours in a SpatRaster 
 #' @description Add colours to a WUI raster layer (No_WUI, Interface, Intermix)
 #' @param .veg_perc raster layer indicating if the percentage of vegetation in
@@ -840,7 +840,7 @@ plot(nmd_r)
 
 ```
 
-Then, we classified as Non-burnable the following categories:
+Then, we classified as non-burnable the following categories:
 
 ```{r}
 #| label: tbl-nmd-burnable
@@ -855,7 +855,7 @@ nmd_no_fuel_list |>
 
 ```
 
-The original resolution of the map is 10 meters. We aggregate it (by a factor of 10) and transform the coordinate system from `SWEREF99 TM (EPSG:3006)` to `ETRS89-extended / LAEA Europe (EPSG:3035)`.
+The original resolution of the map is 10 meters. We aggregated it (by a factor of 10) and transformed the coordinate system from `SWEREF99 TM (EPSG:3006)` to `ETRS89-extended / LAEA Europe (EPSG:3035)`.
 
 ```{r}
 #| label: NMD-wild-veg-map-sewden
@@ -912,7 +912,7 @@ terra::writeRaster(nmd_wv_perc,
 
 ```
 
-Finally, we combine both maps in one (@fig-wild-vegetation-national)
+Finally, we combined both maps in one (@fig-wild-vegetation-national)
 
 ```{r}
 #| label: fig-wild-vegetation-national
@@ -957,7 +957,7 @@ title("B)", adj = 0)
 
 #### FirEUrisk_Europe_fuel_map
 
-Original data from [@Aragoneses2022]. Al fuels are considered for WUI. The resolution of the original map is 1km and we have re-sampled it to a grid cell of 250x250 grids (same than `region_r`) for the WUI (based in the type that is most presented in the area: `mode`).
+Original data from [@Aragoneses2022] and we considered all fuels. The resolution of the original map is 1km , so we have re-sampled it to a grid cell of 250x250 metres (same than `region_r`) based in the type that is most presented in the area; i.e., `mode`.
 
 ```{r}
 #| label: fig-firEUrisk-fuel-map-norway
@@ -1097,7 +1097,7 @@ knitr::include_graphics("figures/wui_map_approach_bar_massada_2021.png")
 
 ```
 
-We carry out a point-based approach with grid cells of `r raster_resolution` m x `r raster_resolution` m, and a buffer radio of `r radio_buffer` m. Our workflow is therefore:
+We carried out a point-based approach with grid cells of `r raster_resolution` m x `r raster_resolution` m, and a buffer radio of `r radio_buffer` m. Our workflow was therefore:
 
 ```{mermaid}
 flowchart TD
@@ -1116,7 +1116,7 @@ flowchart TD
 
 ```
 
-Therefore, we do the following steps:
+Therefore, we did the following steps:
 
 1.  Create a raster with the potential WUI cells (`wui_potential`)
 
@@ -1320,79 +1320,7 @@ tbl_summary_vegetation(wui_r_se)
 
 ```
 
-Zoom to counties (@fig-wui-map-counties; @tbl-summary-wui-county):
-
-```{r}
-#| label: fig-wui-map-counties
-#| fig-cap: "WUI maps by county based on different fuel/vegetation maps (resolution of 250 x 250 m)"
-#| fig-subcap: 
-#|  - "Viken"
-#|  - "Rogaland"
-#|  - "Vestland"
-#|  - "Trøndelag"
-#|  - "Troms og Finnmark"
-#|  - "Innlandet"
-#|  - "Oslo"
-#|  - "Vestfold og Telemark"
-#|  - "Agder"
-#|  - "Møre og Romsdal"
-#|  - "Nordland"
-#| layout-nrow: 11
-#| out-width: 100%
-
-
-# plot_zoom <- function(.x) {
-#   
-#   zoom_area <- counties |> 
-#     filter(NUTS_NAME == {{ .x }})
-#   
-#   wui_r_zoom <- wui_r |> 
-#     crop(zoom_area) |> 
-#     mask(zoom_area)
-#   
-#   # Add colour table 
-#   coltab(wui_r_zoom) <- 
-#     data.frame(id = 0:2, 
-#                col = c("lightgrey", "#F0E442", "#CC79A7"))
-#   
-#   par(mfrow = c(1, 4))
-#   
-#   plot(wui_r_zoom$effis, 
-#        axes = FALSE, 
-#        font.main = 1,
-#        legend = FALSE,
-#        mar = c(0, 0, 0, 0),
-#        main =  names(wui_r_zoom$effis))
-#   # title( {{ .x }}, line = -4, adj = 0)
-#   
-#   plot(wui_r_zoom$corine, 
-#        axes = FALSE, 
-#        font.main = 1,
-#        legend = FALSE,
-#        mar = c(0, 0, 0, 0),
-#        main =  names(wui_r_zoom$corine))
-#   
-#   plot(wui_r_zoom$firEUrisk,
-#        axes = FALSE, 
-#        font.main = 1,
-#        legend = FALSE,
-#        mar = c(0, 0, 0, 0), 
-#        main =  names(wui_r_zoom$firEUrisk))
-#   
-#   plot(wui_r_zoom$sr16,
-#        axes = F, 
-#        font.main = 1,
-#        legend = FALSE,
-#        mar = c(0, 0, 0, 0), 
-#        main =  names(wui_r_zoom$sr16)) 
-#   
-# }
-# 
-# # par(mfrow = c(1, 11))
-# as.list(counties$NUTS_NAME) |> 
-#   walk(plot_zoom)
-
-```
+Valuer by counties: @tbl-summary-wui-county):
 
 ```{r}
 #| label: tbl-summary-wui-county
@@ -1464,6 +1392,7 @@ filter(counties_wui, CNTR_CODE == "SE") |>
   tbl_summary_county()
 
 ```
+
 ```{r}
 #| label: fig-pct-wui-counties
 
@@ -1614,11 +1543,9 @@ ggsave(plot = p_bar,
 
 ```
 
-![](figures/counties_map.png)
-![WUI percentage by county](figures/counties_wui_perc.png)
+![](figures/counties_map.png) ![WUI percentage by county](figures/counties_wui_perc.png)
 
-
-Area of wild vegetation by county (@tbl-summary-table-areas): Number vegetation cells (centroid is inside the polygon), sum then and calculate the area based on the raster resolution.
+Area of wild vegetation by county (@tbl-summary-table-areas): we calculate the number vegetation cells (i.e., grid centroid is inside the polygon), and calculate the area based on the raster resolution.
 
 ```{r}
 #| label: tbl-summary-table-areas
@@ -1769,7 +1696,6 @@ summary_county |>
 
 
 ```
-
 
 ### Effect distance to large forest
 
@@ -2444,7 +2370,7 @@ tbl_summary_vegetation(wui_r_3_se)
 
 #### Building density 1 #/km2
 
-Equivalent to select any area with building as WUI.
+Equivalent to select any area with building as potential WUI.
 
 ```{r}
 
@@ -2595,8 +2521,6 @@ p_1 / p_3.08 / p_6.17 +
 
 # Wildfires datasets
 
-We analyse all wildfires that have affected buildings from 2016 to 2022 (i.e., 330). The data have been obtained from XX (Norway) and XXX (Sweden).
-
 ```{r}
 #| label: wildfires-points
 
@@ -2611,9 +2535,8 @@ wf_no <- readxl::read_xlsx("data/wui_fires_norway_wgs84.xlsx", skip = 1) |>
 
 wf_se <- readxl::read_xlsx("data/wui_fires_sweden_epsg3006.xlsx") |> 
   janitor::clean_names() |> 
-  mutate(datetime = lubridate::as_date(datetime)) |> 
-  filter(datetime >= lubridate::as_date("2016-01-01")) |> 
-  st_as_sf(coords = c("ecoord", "ncoord"),
+  filter(datetime >= 2016) |> 
+  st_as_sf(coords = c("ecoord", "nccord"),
            crs =  3006) |> 
   select(geometry) |> 
   st_transform(crs = 3035) |> 
@@ -2629,11 +2552,11 @@ ggplot() +
 
 ```
 
-Intersect points with WUI maps
+We have analysed all wildfires that have affected buildings from 2016 to 2023 (i.e., `r dim(wf)[1]`; `r dim(filter(wf, country == "NO"))[1]` in Norway and \``r dim(filter(wf, country == "SE"))[1]` in Sweden). The can be obtained from XX (Norway) and XXX (Sweden).
 
 ## Effect distance to large forest
 
-Get if the grid to which the wildfire is located was defined as WUI in the respective maps.
+Get if the grid to which the wildfire is located was defined as WUI.
 
 ```{r}
 #| label: tbl-wildfire-wui-map
