@@ -2554,7 +2554,79 @@ ggplot() +
 
 We have analysed all wildfires that have affected buildings from 2016 to 2023 (i.e., `r dim(wf)[1]`; `r dim(filter(wf, country == "NO"))[1]` in Norway and \``r dim(filter(wf, country == "SE"))[1]` in Sweden). The can be obtained from XX (Norway) and XXX (Sweden).
 
-## Effect distance to large forest
+## Wilfires and building density 
+
+Calculate the building density of the grid of 250 x 250 m where the wilfire originated. 
+
+```{r}
+#| label: fig-wilfires-number-buildings
+#| fig-cap: Number of buildings per grid cells of 250 m x 250 m and wildfires (red points)
+
+
+ggplot() +
+  tidyterra::geom_spatvector(data = region_v, fill = "white") +
+  tidyterra::geom_spatraster(data = build_focal) +
+  scale_fill_whitebox_c(name = "N. Buildings",
+                        palette = "viridi",
+                        trans = "log10") +
+  geom_sf(data = wf, col = "red", size = 1) +
+  theme_void()
+
+```
+
+```{r}
+#| label: fig-wildfires-buildings-density
+#| fig-cap: Histogram of building density in each wildfire
+
+
+# Link wildfires with building density (build_focal) 
+wf_build_density <- extract(build_focal, wf) |>
+  # Assign 0 to NAs --> No buildings
+  mutate(focal_sum = ifelse(is.na(focal_sum), 0, focal_sum)) |> 
+  # Building density is the number of buildings / buffer area 
+  # buffer area = circular moving window of 500 m
+  mutate(bd = focal_sum / area_buffer)
+
+
+ggplot(wf_build_density, aes(x = bd)) + 
+  geom_histogram(bins = 50, color = "darkblue", fill = "lightblue") + 
+  theme_bw()
+```
+
+
+```{r}
+#| label: tbl-wildfires-buildings-density
+#| tbl-cap: Number of wildfires
+
+
+brks <-  c(0,  1, 3, 6, 10, 20, 50, 100, 500, 1700)
+wf_build_density |> 
+  mutate(bd_brks = cut(bd, 
+                       brks,
+                       include.lowest = TRUE,
+                       right = FALSE,
+                       dig.lab = 4)) |> 
+  group_by(bd_brks) |> 
+  summarise(n = n(), 
+            perc = n() / nrow(wf_build_density) * 100) |> 
+  mutate(cs = cumsum(perc)) |> 
+  gt() |> 
+  fmt_number(columns = c("perc", "cs"),
+             decimals = 1) |> 
+  tab_spanner(label = md("**Wildfires**"),
+              columns = c(n, perc, cs)) |> 
+  cols_label(
+    bd_brks = md(html("**Building**<br>**density**")),
+    n  = md("**Number**"),
+    perc = md("**Percentage [%]**"),
+    cs = md("**Cumulative [%]**")
+  ) 
+
+```
+
+## WUI definition 
+
+### Effect distance to large forest
 
 Get if the grid to which the wildfire is located was defined as WUI.
 
@@ -2637,7 +2709,7 @@ wf_wui_counts |>
 
 ```
 
-## Effect threshold building density
+### Effect threshold building density
 
 ```{r}
 #| label: read-wui-maps-building-density
