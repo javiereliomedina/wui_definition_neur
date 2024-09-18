@@ -1361,7 +1361,7 @@ tbl_summary_county <- function(.x) {
 
 
 # Summary by county
-tbl_wui_county <- terra::extract(wui_r, counties) |>  
+tbl_wui_county <- terra::extract(wui_r, counties, touches = TRUE) |>  
   pivot_longer(cols = -ID, 
                names_to = "name",
                values_to = "value") |> 
@@ -1559,6 +1559,7 @@ county_build_count <- build_counts |>
   extract(y = vect(counties),
           fun = "sum",
           na.rm = TRUE,
+          touches = TRUE,
           bind = TRUE) |> 
   # sf object
   st_as_sf() %>% 
@@ -1576,6 +1577,7 @@ f_pct_veg <- function(df) {
     extract(y = vect(counties),
             fun = "sum",
             na.rm = TRUE,
+            touches = TRUE,
             bind = TRUE) |>  
     st_as_sf() |> 
     # Area (number cells x area cells)
@@ -1696,6 +1698,40 @@ summary_county |>
 
 
 ```
+
+
+Number of buildings in WUI 
+
+
+```{r}
+#| label: tbl-buildings-wui
+#| tbl-cap: Number of buildings in each WUI classification 
+
+
+c(build_counts, wui_r) |> 
+  as_tibble() |>   
+  mutate(sum = ifelse(is.na(sum), 0, sum)) |> 
+  drop_na() |> 
+  pivot_longer(col = -sum, names_to = "name") |> 
+  group_by(name, value) |>
+  summarise(buildings = sum(sum)) |> 
+  ungroup() |> 
+  pivot_wider(names_from = name, 
+              values_from = buildings) |> 
+  gt(rowname_col =  "value") |> 
+  grand_summary_rows(
+    fns = list(Total = ~sum(.))
+  ) |> 
+   cols_label(
+    corine = md("**corine**"),
+    effis = md("**effis**"),
+    firEUrisk ~ md("**firEUrisk**"),
+    national ~ md("**national**")
+  )
+  
+
+```
+
 
 ### Effect distance to large forest
 
@@ -2580,7 +2616,7 @@ ggplot() +
 
 
 # Link wildfires with building density (build_focal) 
-wf_build_density <- extract(build_focal, wf) |>
+wf_build_density <- extract(build_focal, wf, touches = TRUE) |>
   # Assign 0 to NAs --> No buildings
   mutate(focal_sum = ifelse(is.na(focal_sum), 0, focal_sum)) |> 
   # Building density is the number of buildings / buffer area 
