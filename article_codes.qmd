@@ -172,7 +172,7 @@ add_colours_wui <- function(.x) {
   df_lev_lst <- replicate(nlyr(r), df_lev, simplify = FALSE)
   levels(r) <- df_lev_lst
   # Add colour table 
-  df_col <- data.frame(id = 0:2, col = c("lightgrey", "#FF6633", "#003366"))
+  df_col <- data.frame(id = 0:2, col = c("#FAFAFA", "#FF6633", "#003366"))
   df_col_lst <- replicate(nlyr(r), df_col, simplify = FALSE)
   coltab(r) <- df_col_lst
   
@@ -1699,9 +1699,7 @@ summary_county |>
 
 ```
 
-
-Number of buildings in WUI 
-
+Number of buildings in WUI
 
 ```{r}
 #| label: tbl-buildings-wui
@@ -1731,7 +1729,6 @@ c(build_counts, wui_r) |>
   
 
 ```
-
 
 ### Effect distance to large forest
 
@@ -2590,9 +2587,9 @@ ggplot() +
 
 We have analysed all wildfires that have affected buildings from 2016 to 2023 (i.e., `r dim(wf)[1]`; `r dim(filter(wf, country == "NO"))[1]` in Norway and \``r dim(filter(wf, country == "SE"))[1]` in Sweden). The can be obtained from XX (Norway) and XXX (Sweden).
 
-## Wilfires and building density 
+## Wilfires and building density
 
-Calculate the building density of the grid of 250 x 250 m where the wilfire originated. 
+Calculate the building density of the grid of 250 x 250 m where the wilfire originated.
 
 ```{r}
 #| label: fig-wilfires-number-buildings
@@ -2629,7 +2626,6 @@ ggplot(wf_build_density, aes(x = bd)) +
   theme_bw()
 ```
 
-
 ```{r}
 #| label: tbl-wildfires-buildings-density
 #| tbl-cap: Number of wildfires
@@ -2660,7 +2656,7 @@ wf_build_density |>
 
 ```
 
-## WUI definition 
+## WUI definition
 
 ### Effect distance to large forest
 
