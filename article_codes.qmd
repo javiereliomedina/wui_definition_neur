@@ -1545,7 +1545,7 @@ ggsave(plot = p_bar,
 
 ![](figures/counties_map.png) ![WUI percentage by county](figures/counties_wui_perc.png)
 
-Area of wild vegetation by county (@tbl-summary-table-areas): we calculate the number vegetation cells (i.e., grid centroid is inside the polygon), and calculate the area based on the raster resolution.
+Area of wild vegetation by county (@tbl-summary-table-areas): we calculate the number of vegetation cells (i.e., grid centroid is inside the polygon), and calculate the area based on the raster resolution.
 
 ```{r}
 #| label: tbl-summary-table-areas
@@ -1699,8 +1699,46 @@ summary_county |>
 
 ```
 
-Number of buildings in WUI
+Total area of WUI (by type of vegetation):
 
+```{r}
+#| label: area-wui-type
+
+
+wui_r |>  
+  as_tibble() |> 
+  drop_na() |> 
+  pivot_longer(col = everything(),
+               names_to = "name") |> 
+  group_by(name, value) |>
+  summarise(n = n()) |> 
+  ungroup() |> 
+  mutate(area = n * (0.25 * 0.25)) |> #km2
+  pivot_wider(names_from = name, 
+              values_from = c(n, area)) |> 
+  select(value, starts_with("area")) |> 
+  gt() |>
+  fmt_number(decimals = 0) |> 
+  cols_label(
+    value = "",
+    area_corine = md("**corine**"),
+    area_effis = md("**effis**"),
+    area_firEUrisk ~ md("**firEUrisk**"),
+    area_national ~ md("**national**")
+  ) |> 
+  tab_options(
+    table.font.size = 9,
+    row_group.background.color = "lightgrey",
+    row_group.padding = px(1),
+    row_group.font.weight = "bold",
+    data_row.padding = px(1)
+  )
+  
+```
+
+
+
+Number of buildings in WUI
 ```{r}
 #| label: tbl-buildings-wui
 #| tbl-cap: Number of buildings in each WUI classification 
@@ -1725,6 +1763,12 @@ c(build_counts, wui_r) |>
     effis = md("**effis**"),
     firEUrisk ~ md("**firEUrisk**"),
     national ~ md("**national**")
+  ) |>
+  tab_options(
+    table.font.size = 9,
+    row_group.padding = px(1),
+    row_group.font.weight = "bold",
+    data_row.padding = px(1)
   )
   
 
@@ -2566,7 +2610,8 @@ wf_no <- readxl::read_xlsx("data/wui_fires_norway_wgs84.xlsx", skip = 1) |>
   st_transform(crs = 3035) |> 
   mutate(country = "NO")
 
-wf_se <- readxl::read_xlsx("data/wui_fires_sweden_epsg3006.xlsx") |> 
+# Infrastructures affected by wildfires in SE
+wf_se_inf <- readxl::read_xlsx("data/wui_fires_sweden_epsg3006.xlsx") |> 
   janitor::clean_names() |> 
   filter(datetime >= 2016) |> 
   st_as_sf(coords = c("ecoord", "nccord"),
@@ -2575,17 +2620,22 @@ wf_se <- readxl::read_xlsx("data/wui_fires_sweden_epsg3006.xlsx") |>
   st_transform(crs = 3035) |> 
   mutate(country = "SE")
 
+# Wildfires in SE (unique coordinates - one wildfire can affect several buildings)
+wf_se <- distinct(wf_se_inf)
+
+# Final dataset (NO + SE)
 wf <- rbind(wf_no, wf_se)
 
+# Map
 ggplot() +
-  geom_sf(data = region_sf, fill = "lightgrey") +
+  geom_sf(data = region_sf, fill = "#FAFAFA") +
   geom_sf(data = country_sf, fill = NA) +
   geom_sf(data = wf, col = "red", size = 0.4) +
   theme_void() 
 
 ```
 
-We have analysed all wildfires that have affected buildings from 2016 to 2023 (i.e., `r dim(wf)[1]`; `r dim(filter(wf, country == "NO"))[1]` in Norway and \``r dim(filter(wf, country == "SE"))[1]` in Sweden). The can be obtained from XX (Norway) and XXX (Sweden).
+We have analysed all wildfires that have affected buildings from 2016 to 2023 (i.e., `r dim(wf)[1]`; `r dim(filter(wf, country == "NO"))[1]` in Norway and `r dim(filter(wf, country == "SE"))[1]` in Sweden). The can be obtained from the *Norwegian Directorate for Civil Protection (DSB)*  (Norway) and the *Swedish Civil Contingencies Agency (MSB)* (Sweden). [Note: They were not uploaded in our GitHub repository]
 
 ## Wilfires and building density
 
@@ -2652,7 +2702,13 @@ wf_build_density |>
     n  = md("**Number**"),
     perc = md("**Percentage [%]**"),
     cs = md("**Cumulative [%]**")
-  ) 
+  ) |> 
+  tab_options(
+    table.font.size = 9,
+    row_group.padding = px(1),
+    row_group.font.weight = "bold",
+    data_row.padding = px(1)
+  )
 
 ```
 

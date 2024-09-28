@@ -1,2 +1,3 @@
-# wui_definition_neur
-R code for the article: "How to approach the definition of WUI in northern Europe"
+# How to approach the definition of WUI in Northern Europe
+
+R code for the article: "How to approach the definition of WUI in Northern Europe"

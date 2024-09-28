@@ -2,9 +2,10 @@ project:
   type: book
 
 book: 
-  title: "How to approach the definition of WUI in northern Europe"
-  author: "Javier Elio, Elsa Pastor, Nieves Fernandez-Anez, Frida Vermina Plathner"
+  title: "How to approach the definition of WUI in Northern Europe"
+  author: "Javier Elio Medina, Frida Vermina Plathner, Elsa Pastor, Nieves Fernandez-Anez"
   date: today
+  repo-url: "https://github.com/javiereliomedina/wui_definition_neur.git"
   chapters:
     - index.qmd
     - article.qmd

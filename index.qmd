@@ -1,6 +1,6 @@
 # Preface
 
-Data have been analysed with **R** (version `r paste(R.Version()$major, R.Version()$minor, sep = ".")`) and **Rstudio**, and the book has been created with **Quarto**. 
+Data have been analysed with **R** (version `r paste(R.Version()$major, R.Version()$minor, sep = ".")`) and **Rstudio**, and the book has been created with **Quarto**.
 
 R session {.unnumbered}
 
@@ -9,4 +9,3 @@ R session {.unnumbered}
 sessionInfo()
 
 ```
-
