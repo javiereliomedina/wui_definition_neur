@@ -543,7 +543,7 @@ title("B)", adj = 0)
 
 #### Corine Land Cover
 
-We have used the Corine Land Cover 2018 (Version 2020_20u1), downloaded from [Copernicus](https://land.copernicus.eu/pan-european/corine-land-cover). The resolution of the raster is 100 m x 100 m. We classify as potential wildland vegetation the following classes @fig-corine-wild-vegetation:
+We have used the Corine Land Cover 2018 (Version 2020_20u1), downloaded from [Copernicus](https://land.copernicus.eu/pan-european/corine-land-cover). The resolution of the raster is 100 m x 100 m. We classify as potential wildland vegetation the following classes @fig-corine-fuel-map-norway:
 
 -   311: [Broad-leaved forest](https://land.copernicus.eu/user-corner/technical-library/corine-land-cover-nomenclature-guidelines/html/index-clc-311.html)
 -   312: [Coniferous forest](https://land.copernicus.eu/user-corner/technical-library/corine-land-cover-nomenclature-guidelines/html/index-clc-312.html)
@@ -957,7 +957,7 @@ title("B)", adj = 0)
 
 #### FirEUrisk_Europe_fuel_map
 
-Original data from [@Aragoneses2022] and we considered all fuels. The resolution of the original map is 1km , so we have re-sampled it to a grid cell of 250x250 metres (same than `region_r`) based in the type that is most presented in the area; i.e., `mode`.
+We use the fuel map produced by [@Aragoneses2022]. The original resolution of the map is 1km, so we resampled it to a grid cell of 250x250 metres (same grids than `region_r`) based in the type that is most presented in the area; i.e., `mode` (@fig-firEUrisk-fuel-map-norway).
 
 ```{r}
 #| label: fig-firEUrisk-fuel-map-norway
@@ -1320,7 +1320,7 @@ tbl_summary_vegetation(wui_r_se)
 
 ```
 
-Valuer by counties: @tbl-summary-wui-county):
+Values by counties:
 
 ```{r}
 #| label: tbl-summary-wui-county
