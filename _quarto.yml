@@ -1,5 +1,6 @@
 project:
   type: book
+  output-dir: docs
 
 book: 
   title: "How to approach the definition of WUI in Northern Europe"
